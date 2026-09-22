@@ -52,5 +52,5 @@ Not: Kurulum adımları ve dosya isimleri projenin güncel yapısına göre kont
 5. Yeni muhasebe modüllerinin eklenmesi
 6. Görüntü işleme özelliği
 
-![Ana Menu](assets/MuhAppAnaMenü)
+![Ana Menu](assets/MuhAppAnaMenü.png)
 ![Fatura](assets/MuhAppDetaylıFatura.png)

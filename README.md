@@ -1,3 +1,17 @@
+
+    ███╗   ███╗██╗   ██╗██╗  ██╗ █████╗ ██████╗ ██████╗ 
+    ████╗ ████║██║   ██║██║  ██║██╔══██╗██╔══██╗██╔══██╗
+    ██╔████╔██║██║   ██║███████║███████║██████╔╝██████╔╝
+    ██║╚██╔╝██║██║   ██║██╔══██║██╔══██║██╔═══╝ ██╔═══╝ 
+    ██║ ╚═╝ ██║╚██████╔╝██║  ██║██║  ██║██║     ██║     
+    ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝     
+    ====================================================
+                BİR MUHASEBE UYGULAMASI
+    ====================================================
+    
+
+
+
 ## 📊 MuhApp - Terminal Tabanlı Muhasebe Uygulaması:
 
 MuhApp, küçük ve orta ölçekli işletmelerin (veya serbest çalışanların) günlük muhasebe işlemlerini terminal üzerinden (CLI) hızlı ve pratik bir şekilde yönetebilmesi için geliştirilmiş bir **Python** uygulamasıdır. 

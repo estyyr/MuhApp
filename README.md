@@ -40,21 +40,21 @@ Uygulama şu an aşağıdaki modülleri aktif olarak desteklemektedir:
 6. **📈 Raporlar:** Şirketin genel durumunu yansıtacak detaylı istatistik ekranları.
 
 ## 💻 Kurulum
-1. Repoyu klonla
+1. **Repoyu klonla:**
 git clone https://github.com/estyyr/MuhApp.git
 cd MuhApp
-2. Gerekli kütüphaneyi yükle
+2. **Gerekli kütüphaneyi yükle:**
 pip install sqlalchemy
-3. Veritabanını oluştur
+3. **Veritabanını oluştur:**
 python test_db.py
-4. Uygulamayı başlat
+4. **Uygulamayı başlat:**
 python main.py
 
-Not: Kurulum adımları ve dosya isimleri projenin güncel yapısına göre kontrol edilmelidir.
+**Not:** Kurulum adımları ve dosya isimleri projenin güncel yapısına göre kontrol edilmelidir.
 
 ## 📌 Geliştirme Durumu
 
--> MuhApp, geliştirme sürecinde olan bir projedir. Yeni özellikler eklenmesi, mevcut modüllerin iyileştirilmesi ve uygulamanın daha kullanışlı hâle getirilmesi planlanmaktadır.
+**->** MuhApp, geliştirme sürecinde olan bir projedir. Yeni özellikler eklenmesi, mevcut modüllerin iyileştirilmesi ve uygulamanın daha kullanışlı hâle getirilmesi planlanmaktadır.
 
 ## 🎯 Gelecek Planları
 1. Kullanıcı arayüzünün geliştirilmesi

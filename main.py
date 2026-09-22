@@ -7,6 +7,7 @@ from app.models.payment import Payment
 from app.models.transaction import Transaction
 
 
+
 def musteri_yonetimi():
     while True:
         print("\n" + "-"*37)
@@ -302,7 +303,7 @@ def fatura_yonetimi():
                         break
                     miktar = float(input("Miktar (Adet):"))
                     birim_fiyat = float(input("Birim Fiyat (TL):"))
-                    kdv_oranı_input = input("KDV Oranı (Aksi yazılmadığı sürece %20 uygulanır):")
+                    kdv_oranı_input = (input("KDV Oranı (Aksi yazılmadığı sürece %20 uygulanır):"))
                     if kdv_oranı_input == "":
                         kdv_oranı_input = 20.0
                     else:
@@ -520,17 +521,108 @@ def gg_takibi():
 
 
 def ot_takibi():
-    print(" yakında eklenecek...")
+    while True:
+        print("="*20)
+        print("    ÖDEME VE TAHSİLAT    ")
+        print("="*20)
+        print("Ana Menüye Dön (0)")
+        print("Tahsilat Al (1)")
+        print("Ödeme Yap (2)")
+        print("Ödeme/Tahsilat Geçmişini Listele (3)")
+        print("İşlem Sil/İptal Et (4)")
+        print("="*20)
+        secim = int(input("Seçiminiz (0-4):"))
+        match secim:
+            case "0":
+                print("Ana menüye dönülüyor...")
+                time.sleep(1)
+                break
+            case "1":
+                print("----- TAHSİLAT (GİRİŞ) -----")
+                print(" MÜŞTERİ LİSTESİ ")
+                time.sleep(1)
+                db = SessionLocal()
+                musteri_listele(db)
+                hangimusteri_id = int(input("Hangi Müşteriden Tahsil Edildi? (İptal için -1):"))
 
-def rapor_takibi():
-    print(" yakında eklenecek...")
+
+                if hangimusteri_id == -1:
+                    db.close()
+                    continue
+                else:
+                    musteri = db.query(Customer).filter(Customer.id == hangimusteri_id).first()
+
+                    if not musteri:
+                        print("Yanlış ID girildi!")
+                        db.close()
+                        continue
+
+                    print(f"\n Seçilen Müşteri: {musteri.company_name}")
+                    tahsil_tutar = float(input("Ne kadar tahsil edildi? (TL):"))
+
+                    tahsil_acıklama = input("Açıklama/Yöntem (Örn: Havale, Nakit):")
+
+                    yeni_tahsilat = Payment(
+                        amount = tahsil_tutar,
+                        customer_id =musteri.id,
+                        payment_type = "tahsilat",
+                        description = tahsil_acıklama
+                )
+
+                    db.add(yeni_tahsilat)
+                    db.commit()
+
+                    print(f"{musteri.company_name} firması için {tahsil_tutar} TAHSİLAT (GİRİŞ) başarıyla kaydedildi.")
+                    time.sleep(1)
+                    db.close()
+
+            case "2":
+                print("----- ÖDEME (ÇIKIŞ) -----")
+                print(" MÜŞTERİ LİSTESİ ")
+                time.sleep(1)
+                db = SessionLocal()
+                musteri_listele(db)
+                hangimusteri_id = int(input("Hangi Müşteriye Ödeme yapıldı? (İptal için -1):"))
+
+                if hangimusteri_id == -1:
+                    db.close()
+                    continue
+                else:
+                    musteri = db.query(Customer).filter(Customer.id == hangimusteri_id).first()
+                    if not musteri:
+                        print("Yanlış ID girildi!")
+                        db.close()
+                        continue
+                    print(f"\n Seçilen Müşteri: {musteri.company_name}")
+                    odeme_tutar = float(input("Ne kadar ödeme yapıldı? (TL):"))
+                    odeme_acıklama = input("Açıklama/Yöntem (Örn: Havale, Nakit):")
+
+                    yeni_odeme = Payment(
+                        amount = odeme_tutar,
+                        customer_id = musteri.id,
+                        payment_type = "ödeme",
+                        description = odeme_acıklama
+                    )
+                    db.add(yeni_odeme)
+                    db.commit()
+
+                    print(f"{musteri.company_name} firması için {odeme_tutar} ÖDEME (ÇIKIŞ) başarıyla kaydedildi.")
+                    time.sleep(1)
+                    db.close()
+
+            #case "3":
+                
+
+
+
+
 
 
 def musteri_listele(db):
     musteriler = db.query(Customer).all()
     if not musteriler:
         print("Henüz müşteriniz yok.")
-        time.sleep(2)
+        time.sleep(1)
         return False
     for musteri in musteriler:
         print(f"ID: {musteri.id} | Firma: {musteri.company_name} | Tel: {musteri.phone} | Şehir: {musteri.city} | E-Posta: {musteri.email}")
@@ -557,6 +649,19 @@ def fatura_listele(db):
 
 
 def main():
+    logo = """
+    ███╗   ███╗██╗   ██╗██╗  ██╗ █████╗ ██████╗ ██████╗ 
+    ████╗ ████║██║   ██║██║  ██║██╔══██╗██╔══██╗██╔══██╗
+    ██╔████╔██║██║   ██║███████║███████║██████╔╝██████╔╝
+    ██║╚██╔╝██║██║   ██║██╔══██║██╔══██║██╔═══╝ ██╔═══╝ 
+    ██║ ╚═╝ ██║╚██████╔╝██║  ██║██║  ██║██║     ██║     
+    ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝     
+    ====================================================
+                BİR MUHASEBE UYGULAMASI
+    ====================================================
+    """
+    print(logo)
+    time.sleep(1)
     while True:
         print("\n"+ "="*30)
         print("    ======= MuhApp ======= ")

@@ -1,4 +1,4 @@
-📊 MuhApp - Terminal Tabanlı Muhasebe Uygulaması:
+## 📊 MuhApp - Terminal Tabanlı Muhasebe Uygulaması:
 
 MuhApp, küçük ve orta ölçekli işletmelerin (veya serbest çalışanların) günlük muhasebe işlemlerini terminal üzerinden (CLI) hızlı ve pratik bir şekilde yönetebilmesi için geliştirilmiş bir **Python** uygulamasıdır. 
 Sadece bir arayüz programı değil; arka planda **İlişkisel Veritabanı (RDBMS)** mantığı barındıran tam donanımlı bir arka uç (backend) projesidir.
@@ -27,10 +27,30 @@ Uygulama şu an aşağıdaki modülleri aktif olarak desteklemektedir:
 5. **💳 Ödeme / Tahsilat:** Müşteri borçlarından düşülecek şekilde para girişi ve çıkışı.
 6. **📈 Raporlar:** Şirketin genel durumunu yansıtacak detaylı istatistik ekranları.
 
-## 💻 Kurulum ve Çalıştırma
-1. Repoyu bilgisayarınıza indirin (clone):
-   git clone https://github.com/estyyr/MuhApp.git
-2.  cd MuhApp #Proje dizinine girin:
-3.  pip install sqlalchemy #Gerekli kütüphaneleri yükleyin:
-4.  python test_db.py #İlk kurulum için veritabanını oluşturun:
-5.  python main.py #Uygulamayı başlatın:)
+## 💻 Kurulum
+1. Repoyu klonla
+git clone https://github.com/estyyr/MuhApp.git
+cd MuhApp
+2. Gerekli kütüphaneyi yükle
+pip install sqlalchemy
+3. Veritabanını oluştur
+python test_db.py
+4. Uygulamayı başlat
+python main.py
+
+Not: Kurulum adımları ve dosya isimleri projenin güncel yapısına göre kontrol edilmelidir.
+
+## 📌 Geliştirme Durumu
+
+-> MuhApp, geliştirme sürecinde olan bir projedir. Yeni özellikler eklenmesi, mevcut modüllerin iyileştirilmesi ve uygulamanın daha kullanışlı hâle getirilmesi planlanmaktadır.
+
+## 🎯 Gelecek Planları
+1. Kullanıcı arayüzünün geliştirilmesi
+2. Veritabanı yapısının iyileştirilmesi
+3. Muhasebe işlemleri için daha kapsamlı raporlar
+4. Veri doğrulama ve hata yönetiminin geliştirilmesi
+5. Yeni muhasebe modüllerinin eklenmesi
+6. Görüntü işleme özelliği
+
+![Ana Menu](assets/MuhAppAnaMenü)
+![Fatura](assets/MuhAppDetaylıFatura.png)

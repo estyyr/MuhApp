@@ -462,13 +462,13 @@ def gg_takibi():
                 else:
                     bakiye= 0
                     for islem in islemler:
-                        tutar_gosterim = f"+{islem.amount}" if islem.transaction_type == "gelir" else f"{islem.amount}"
+                        tutar_gosterim = f"+{islem.amount}" if islem.type == "gelir" else f"{islem.amount}"
 
-                        if islem.transaction_type == "gelir":
+                        if islem.type == "gelir":
                             bakiye += islem.amount
                         else:
                             bakiye -= islem.amount
-                            print(f"ID: {islem.id} | Tür: {islem.transaction_type.upper()} | Kategori: {islem.category.name} | Tutar:{tutar_gosterim} TL | Tarih: {islem.transaction_date}")
+                            print(f"ID: {islem.id} | Tür: {islem.type.upper()} | Kategori: {islem.category.name} | Tutar:{tutar_gosterim} TL | Tarih: {islem.transaction_date}")
 
                     print("="*20)
                     print(f"GÜNCEL KASA BAKİYESİ {bakiye} TL")
@@ -531,7 +531,7 @@ def ot_takibi():
         print("Ödeme/Tahsilat Geçmişini Listele (3)")
         print("İşlem Sil/İptal Et (4)")
         print("="*20)
-        secim = int(input("Seçiminiz (0-4):"))
+        secim = input("Seçiminiz (0-4):")
         match secim:
             case "0":
                 print("Ana menüye dönülüyor...")
@@ -575,6 +575,7 @@ def ot_takibi():
                     print(f"{musteri.company_name} firması için {tahsil_tutar} TAHSİLAT (GİRİŞ) başarıyla kaydedildi.")
                     time.sleep(1)
                     db.close()
+                    input("\nDevam etmek için Enter'a basın...")
 
             case "2":
                 print("----- ÖDEME (ÇIKIŞ) -----")
@@ -610,11 +611,171 @@ def ot_takibi():
                     time.sleep(1)
                     db.close()
 
-            #case "3":
+            case "3":
+                db = SessionLocal()
+                ot_gecmisi(db)
+                db.close()
+
+            case "4":
+                print("\n------ İŞLEM SİL/İPTAL ET ------")
+                print("------ ÖDEME/TAHSİLAT GEÇMİŞİ ------")
+                db = SessionLocal()
+                ot_gecmisi(db)
+                db.close
+                islem_id = int(input("\nSilmek istediğiniz işlem ID (İptal için -1): "))
                 
+                if islem_id == -1:
+                    print("İptal edildi!")
+                    db.close()
+                    input("\nDevam etmek için Enter'a basın...")
+                    continue
+                islem = db.query(Payment).filter(Payment.id == islem_id).first()
+                if not islem:
+                    print("İşlem Bulunamadı!")
+                else:
+                    eminlik = input(f"ID:{islem.id} sahibi işlem silinecek. Emin misiniz?(e/h):")
+                    if eminlik.lower() == "e":
+                        db.delete(islem)
+                        db.commit()
+                        print("işlem başarıyla silindi.")
+                    else:
+                        print("İptal edildi.")
+                db.close()
+                time.sleep(1)
+            case _:
+                print("Geçersiz!")
+                time.sleep(1)
+
+
+def rapor_takibi():
+    while True:
+        print("="*20)
+        print("-----RAPOR TAKİBİ-----")
+        print("="*20)
+        print("Ana Menüye Dön (0)")
+        print("Genel Özet (Kasa Durumu) (1)")
+        print("Fatura Raporu (2)")
+        print("Kategori Bazlı Rapor (3)")
+        print("Müşteri Bazlı Rapor (4)")
+        print("="*20)
+        secim = input("Seçiminiz (0-4):")
+        match secim:
+            case "0":
+                print("Ana menüye dönülüyor...")
+                time.sleep(1)
+                break
+            case "1":
+                print("===== GENEL KASA DURUMU =====")
+                print("*" * 25)
+                print("--> FATURALAR")
+                print("-" * 25)
+                db = SessionLocal()
+                faturalar = db.query(Invoice).all()
+                toplam_adet = len(faturalar)
+                print(f"Toplam Fatura Sayısı:{toplam_adet}")
+                toplam_tutar = 0 
+                for fatura in faturalar:
+                    toplam_tutar += fatura.total_amount
+                print(f"Toplam Tutar: {toplam_tutar} TL")
+                print("*" * 25)
+                print("--> GELİR / GİDER")
+                print("-" * 25)
+                gelirler = db.query(Transaction).filter(Transaction.type == "gelir").all()
+                giderler = db.query(Transaction).filter(Transaction.type == "gider").all()
+                toplam_gelir = 0
+                for gelir in gelirler:
+                    toplam_gelir += gelir.amount
+                topla_gider = 0
+                for gider in giderler:
+                    toplam_gider += gider.amount
+                net_kasa = toplam_gelir - topla_gider
+
+                print(f"Toplam Gelir: +{toplam_gelir} TL")
+                print(f"Toplam Gider: -{topla_gider} TL")
+                print(f"Net Kasa: {net_kasa} TL")
+                print("*" * 25)
+                print("--> ÖDEME / TAHSİLAT")
+                print("-" * 25)
+
+                odemeler = db.query(Payment).filter(Payment.payment_type == "ödeme").all()
+                tahsilatlar = db.query(Payment).filter(Payment.payment_type == "tahsilat").all()
+                toplam_tahsilat = 0
+                for tahsilat in tahsilatlar:
+                    toplam_tahsilat += tahsilat.amount
+                toplam_odeme = 0
+                for odeme in odemeler:
+                    toplam_odeme += odeme.amount
+                print(f"Toplam Tahsilat: {toplam_tahsilat}")
+                print(f"Toplam Ödeme: {toplam_odeme}")
+                print("="*25)
+                input("\nDevam etmek için Enter'a basın...")
+            case "2":
+                print("====== FATURA RAPORU ======")
+                db = SessionLocal()
+                ftr_rapor = db.query(Invoice).all()
+                if not ftr_rapor:
+                    print("Henüz hiç fatura yok.")
+                    input("\nDevam etmek için Enter'a basın...")
+                    db.close()
+
+                    continue
+
+                toplam_tutar = 0
+                for ftr in ftr_rapor:
+                    print(f"ID: {ftr_rapor.id}| Müşteri: {ftr_rapor.company_name} | No: {ftr_rapor.invoice_id} | Tutar: {ftr_rapor.total_amount} | Durum: {ftr_rapor.status}")
+                    toplam_tutar += ftr.total_amount
+
+                print("-" * 25)
+                print(f"Toplam Fatura Sayısı: {len(ftr_rapor)}")
+                print(f"Toplam Tutar : {toplam_tutar} TL")
+                db.close()
+                input("\nDevam etmek için Enter'a basın...")
+
+            case "3":
+                print("======= KATEGORİ BAZLI RAPOR =======")
+                print("\nGELİR KATEGORİLERİ:")
+                db = SessionLocal()
+                gelirler_kategoriler = db.query(Category).filter(Category.type == "gelir").all()
+                for ktgr in gelirler_kategoriler:
+                    islemler = db.query(Transaction).filter(Transaction.category_id == ktgr.id).all()
+                    toplam = sum(islem.amount for islem in islemler)
+                    print(f"{ktgr.name} : +{toplam} TL")
+                print("\nGİDER KATEGORİLERİ:")
+                giderler_kategoriler = db.query(Category).filter(Category.type == "gider").all()
+                for ktgr in giderler_kategoriler:
+                    islemler = db.query(Transaction).filter(Transaction.category_id == ktgr.id).all()
+                    toplam = sum(islem.amount for islem in islemler)
+                    print(f"{ktgr.name} : -{toplam} TL")
+            case "4":
+                print("====== MÜŞTERİ BAZLI RAPOR ======")
+                db = SessionLocal()
+                musteriler = db.query(Customer).all()
+
+                if not musteriler:
+                    print("Henüz hiç müşteri yok.")
+                    db.close()
+                    input("\nDevam etmek için Enter'a basınız...")
+                    continue
+                for musteri in musteriler:
+                    faturalar = db.query(Invoice).filter(Invoice.customer_id == musteri.id).all()
+                    toplam_fatura = sum(f.total_amount for f in faturalar)
+
+                    tahsilatlar = db.query(Payment).filter(Payment.customer_id == musteri.id, Payment.payment_type == "tahsilat").all()
+
+                    net = toplam_fatura - toplam_tahsilat
+
+                    print(f"\nID: {musteri.id} | Firma: {musteri.company_name}")
+                    print(f" Toplam Fatura: {toplam_fatura}")
+                    print(f" Toplam Tahsilat: {toplam_tahsilat}")
+                    print(f" Kalan Bakiye: {net}")
+                    print("-" * 30)
+
+                db.close()
+                input("\nDevam etmek için Enter'a basınız...")
 
 
 
+                print(f"")
 
 
 
@@ -647,7 +808,17 @@ def fatura_listele(db):
         print(f"ID: {f.id} | Müşteri: {f.customer.company_name} | Fatura No: {f.invoice_number} | Tarih: {f.invoice_date} | Toplam. {f.total_amount} | Durum: {f.status}")
     return True
 
-
+def ot_gecmisi(db):
+    print("------ ÖDEME/TAHSİLAT GEÇMİŞİNİ LİSTELE ------")
+    islemler = db.query(Payment).all()
+    if not islemler:
+        print("Henüz Ödeme/Tahsilat geçmişi yok")
+        time.sleep(1)
+        return False
+    for islem in islemler:
+        tutar_gosterim = f"+{islem.amount}" if islem.payment_type == "tahsilat" else f"-{islem.amount}"
+        print(f"ID: {islem.id} | Müşteri: {islem.customer.company_name} | TÜr:{islem.payment_type.upper()} | Tutar:{tutar_gosterim} | Tarih:{islem.payment_date} ")
+    return True
 def main():
     logo = """
     ███╗   ███╗██╗   ██╗██╗  ██╗ █████╗ ██████╗ ██████╗ 
@@ -657,7 +828,7 @@ def main():
     ██║ ╚═╝ ██║╚██████╔╝██║  ██║██║  ██║██║     ██║     
     ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝     
     ====================================================
-                BİR MUHASEBE UYGULAMASI
+    ====================================================
     ====================================================
     """
     print(logo)
